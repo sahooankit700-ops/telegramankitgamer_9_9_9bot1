@@ -82,3 +82,30 @@ if __name__ == "__main__":
     
     # Start the Flask web server on the main thread
     app.run(host="0.0.0.0", port=8080)
+import telebot
+
+# 1. Apne Details Yahan Daalein
+API_TOKEN = '8762695616:AAEpRkIVFWtwqQ-RCnfEGrEeCVTiUuojMEA'  # @BotFather wala token
+MY_CHAT_ID = 6422203775     # @userinfobot wala number (bina quotes ke)
+
+bot = telebot.TeleBot(API_TOKEN)
+
+# Start Command
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "Namaste! Main aapka support bot hoon. Aap apna sawal likhein, main Admin ko bata dunga.")
+
+# Har message par Wait reply aur Admin ko Forwarding
+@bot.message_handler(func=lambda message: True)
+def handle_all_messages(message):
+    user_name = message.from_user.first_name
+    
+    # User ko 'Wait' ka reply bhej raha hai
+    bot.reply_to(message, f"Suno {user_name}, aapka message mil gaya! ✅\nAdmin abhi busy hain, please thoda **Wait** karein. Wo jaldi aayenge.")
+
+    # Wahi message AAPKO (Admin) forward kar raha hai
+    bot.forward_message(MY_CHAT_ID, message.chat.id, message.message_id)
+    bot.send_message(MY_CHAT_ID, f"☝️ Upar wala message {user_name} (ID: {message.chat.id}) ne bheja hai.")
+
+print("Bot Active! Ab ye messages aapko forward karega.")
+bot.infinity_polling()
