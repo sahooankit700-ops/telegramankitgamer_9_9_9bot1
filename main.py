@@ -33,32 +33,19 @@ def send_welcome(message):
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     try:
-        user_text = message.text.lower()
-
-        # --- STEP A: Check for Keywords (Fast Reply) ---
-        for word, reply in AUTO_REPLIES.items():
-            if word in user_text:
-                bot.reply_to(message, reply)
-                return  # Agar keyword mil gaya toh AI call nahi hogi
-
-        # --- STEP B: DeepSeek-R1 AI Call (Agar keyword nahi mila) ---
-        bot.send_chat_action(message.chat.id, 'typing')
-
-        chat_completion = client.chat.completions.create(
-            model="deepseek-ai/DeepSeek-R1:novita",
-            messages=[
-                {
-                    "role": "user",
-                    "content": message.text,
-                }
-            ]
+        # Aapka promotion message
+        promo_text = (
+            "<b>Dost, message ke liye shukriya!</b> 🙏\n\n"
+            "Aise hi aur amazing updates ke liye mere <b>YouTube Channel</b> ko subscribe zaroor karein:\n"
+            "👉 <a href='https://youtube.com/shorts/dADjy9G1RKI?si=lvI7bCpVFuIQSzwc'>Yahan Click Karein</a>"
         )
-
-        bot_reply = chat_completion.choices[0].message.content
-        bot.reply_to(message, bot_reply)
-
+        
+        # Bot reply karega (HTML mode use kiya hai taaki link kaam kare)
+        bot.reply_to(message, promo_text, parse_mode='HTML', disable_web_page_preview=False)
+        
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error aaya hai: {e}")
+        
         bot.reply_to(message, "Thoda wait karein, AI abhi busy hai.")
 
 # Bot ko start karne ke liye
